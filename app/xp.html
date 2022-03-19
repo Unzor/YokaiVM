@@ -1,0 +1,78 @@
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;1,100&display=swap" rel="stylesheet">
+<script src="/credentials.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<style>
+.display {
+	position: fixed;
+	transform: translate(-50%, -50%);
+	left: 50%;
+	top: 50%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+ body {
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+    font-family: 'Roboto', sans-serif;'
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+</style>
+<body>
+  <script src="/vnc.js"></script>
+  <div style="position: absolute; transform: translate(-50%, -50%); top: 50%; background: white; left: 50%; border-style: solid; z-index: 9999999999999999999999999; display: none;" id="control">
+      <div id="screen-wrapper" class="display" style="display: none;">
+          <canvas id="screen" style="background: black;">
+          </canvas>
+        </div>
+		<button id="connect" style="position: absolute; transform: translate(-50%, -50%); left: 50%; top: 50%;" onclick="init()">Connect</button>
+<script>
+  window.onerror = function(){
+    Toastify({
+  text: "There was an error connecting. Reload, check the console (CTRL + SHIFT + I) or try again later",
+  className: "error",
+  style: {
+    background: "linear-gradient(to right, #00b09b, #96c93d)",
+  }
+}).showToast();
+  }
+window.connect = function(a) {
+vnc(svnc => {
+    /* attach screen to canvas, create client */
+var canvas = document.getElementById('screen'),
+  screen = new svnc.Screen(canvas),
+  client = new svnc.Client(screen);
+
+var screenWrapper = document.getElementById('screen-wrapper');
+
+  var config = {
+    host: a[0],
+    port: a[1]
+  };
+
+  /* connect to a vnc server */
+  client.connect(config).then(function() {
+    screenWrapper.style.display = 'block';
+document.querySelector('#connect').style.display = "none";
+document.querySelector('#control').style.display = "block";
+document.querySelector('small').style.display = "none";
+})
+})
+}
+window.onload = function() {
+setTimeout(function(){connect(window.getCredentials("xp"));}, 1000)
+}
+</script>
+</body>
